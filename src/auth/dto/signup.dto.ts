@@ -1,4 +1,5 @@
-import { IsEmail, IsNotEmpty, IsString, MinLength } from "class-validator"
+import { IsEmail, IsNotEmpty, IsOptional, IsString, MinLength } from "class-validator"
+import { Role } from "../enums/rolws.enum"
 
 export class signUpDto{
     @IsNotEmpty()
@@ -13,5 +14,8 @@ export class signUpDto{
     @IsString()
     @MinLength(6)
     readonly password:string
+
+    @IsOptional()
+    readonly role:string[]
 
 }
