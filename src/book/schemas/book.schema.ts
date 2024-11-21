@@ -32,6 +32,12 @@ export class Book{
 
     @Prop({type:mongoose.Schema.Types.ObjectId, ref:"user"})
     user:User
+    
+    
+    @Prop()
+    imgCollection: string;
 }
+
+    
 
 export const BookSchema=SchemaFactory.createForClass(Book)

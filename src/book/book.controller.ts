@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post, Put, Query, Req, UploadedFiles, UseGuards, UseInterceptors } from '@nestjs/common';
 import { BookService } from './book.service';
 import { promises } from 'dns';
 import { Book } from './schemas/book.schema';
@@ -10,6 +10,7 @@ import { AuthGuard } from '@nestjs/passport';
 import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/rolws.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guards';
+import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
 @UseGuards(AuthGuard())
 @Controller('books')
 export class BookController {
@@ -42,5 +43,19 @@ export class BookController {
     @Delete(':id')
     async deleteBookById(@Param('id')id:string):Promise<Book>{
         return await this.booksServices.deleteBookById(id);
+    }
+
+    @Put('upload/:id')
+    @UseInterceptors(FilesInterceptor('files'))
+    async uploadImagees(@Param('id')id:string,@UploadedFiles()files:Array<Express.Multer.File>){
+        const res=await this.booksServices.uploadImagesById(id,files)
+        
+        if(!res){
+            throw new Error("Error occured while saving images !!")
+        }
+        else{
+            console.log("Images saved successfuly!!")
+        }
+        return res;
     }
 }

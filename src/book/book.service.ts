@@ -54,4 +54,18 @@ export class BookService {
     async deleteBookById(id:string):Promise<Book>{
         return await this.bookModel.findByIdAndDelete(id);
     }
+
+    async uploadImagesById(id:string,files:Array<Express.Multer.File>):Promise<Book>{
+        let imageData=[];
+        files.forEach(file=>{
+           const newImg={
+                imgname:file.originalname,
+                imgdata:file.buffer,
+                contentType:file.mimetype,
+           }
+            imageData.push(newImg)
+        })
+        const imgCollection=JSON.stringify(imageData);
+        return await this.bookModel.findByIdAndUpdate(id,{imgCollection:imgCollection})
+    }
 }
