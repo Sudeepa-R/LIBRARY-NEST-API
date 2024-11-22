@@ -11,19 +11,21 @@ import { Roles } from 'src/auth/decorators/roles.decorator';
 import { Role } from 'src/auth/enums/rolws.enum';
 import { RolesGuard } from 'src/auth/guards/roles.guards';
 import { FileInterceptor, FilesInterceptor } from '@nestjs/platform-express';
+import { SkipThrottle, Throttle } from '@nestjs/throttler';
 @UseGuards(AuthGuard())
 @Controller('books')
 export class BookController {
     constructor(private readonly booksServices:BookService){}
 
     @Get()
+    @SkipThrottle()
     @Roles(Role.Moderator,Role.Admin)
     @UseGuards(AuthGuard(),RolesGuard)
     async getAllBooks(@Query() query:ExpressQuery):Promise<Book[]>{
         return await this.booksServices.findAll(query);
     }
 
-    
+    @Throttle({default:{limit:1,ttl:2000}})
     @Post()
     async createBook(@Body()book:createBookDto, @Req() req):Promise<Book>{
         // console.log(req.user)
